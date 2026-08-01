@@ -1,0 +1,51 @@
+- name: Define default storage pool
+  become: true
+  loop: "{{ vm.disks }}"
+  loop_control:
+    loop_var: vdisk
+    label: "{{ vdisk.pool }}"
+  community.libvirt.virt_pool:
+    name: default
+    state: present
+    xml: |
+      <pool type="dir">
+        <name>{{ vdisk.pool }}</name>
+        <target>
+          <path>/var/lib/libvirt/images</path>
+        </target>
+      </pool>
+
+- name: Ensure default storage pool is active
+  become: true
+  loop: "{{ vm.disks }}"
+  loop_control:
+    loop_var: vdisk
+    label: "{{ vdisk.pool }}"
+  community.libvirt.virt_pool:
+    name: "{{ vdisk.pool }}"
+    state: active
+    autostart: true
+
+- name: Configure vm
+  become: true
+  community.libvirt.virt_install:
+    name: "{{ vm.name }}"
+    state: present
+    autostart: "{{ vm.autostart | default(false) }}"
+    memory: "{{ vm.memory | default(2048) }}"
+    vcpus: "{{ vm.vcpus | default(2) }}"
+    machine: "{{ vm.machine | default('q35') }}"
+    osinfo: "{{ vm.osinfo }}"
+    disks: "{{ vm.disks }}"
+    networks: "{{ vm.networks | default(omit) }}"
+    pxe: "{{ vm.pxe | default(omit) }}"
+    boot: "{{ vm.boot | default(omit) }}"
+    boot_opts: "{{ vm.boot_opts | default(omit) }}"
+    graphics: "{{ vm.graphics | default(omit) }}"
+    video: "{{ vm.video | default(omit) }}"
+
+- name: Start vm
+  become: true
+  community.libvirt.virt:
+    name: "{{ vm.name }}"
+    state: "{{ vm.state }}"

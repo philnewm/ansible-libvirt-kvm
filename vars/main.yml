@@ -1,5 +1,18 @@
 ---
 
-ansible_role_template: "Default role name still in use."
+libvirt_kvm_required_packages:
+  common: &common
+    - qemu-kvm
+    - libvirt-daemon
+    - libvirt-daemon-driver-qemu
+    - python3-libvirt
+    - python3-lxml
+    - virt-install
+    - libvirt-daemon-driver-network
+  redhat:
+    - *common
+    - libvirt-daemon-driver-storage-core
+  debian:
+    - *common
 
 ...

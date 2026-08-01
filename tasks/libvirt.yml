@@ -1,0 +1,51 @@
+---
+
+- name: Ensure libvirtd is running
+  become: true
+  ansible.builtin.systemd_service:
+    name: "libvirtd"
+    state: started
+    enabled: true
+
+- name: Create storage pool directory
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/libvirt/images
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Get libvirt networks
+  become: true
+  community.libvirt.virt_net:
+    command: list_nets
+  register: libvirt_networks
+
+- name: Define default NAT network
+  become: true
+  loop: "{{ libvirt_kvm_networks }}"
+  loop_control:
+    loop_var: network
+    label: "{{ network.name }}"
+  when: network.name not in libvirt_networks.list_nets
+  community.libvirt.virt_net:
+    command: define
+    name: "{{ network.name }}"
+    state: "{{ network.state }}"
+    autostart: "{{ network.autostart }}"
+    xml: "{{ network.xml }}"
+
+- name: Start default network
+  become: true
+  community.libvirt.virt_net:
+    command: start
+    name: default
+
+- name: Enable network autostart
+  become: true
+  community.libvirt.virt_net:
+    command: start
+    name: default
+
+...

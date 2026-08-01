@@ -1,14 +1,22 @@
 ---
 
-- name: Install debian specific package_facts dependency
+- name: Install required packages
   become: true
-  when: ansible_distribution == "Debian"
   ansible.builtin.package:
-    name: python-apt-common
+    name: "{{ libvirt_kvm_required_packages[ansible_facts.os_family | lower] | flatten(1) }}"
     state: present
+    update_cache: true
 
-# INFO This task may be obsolete for your use-case
-- name: Gather package facts
-  ansible.builtin.package_facts:
+- name: Include libvirt setup
+  ansible.builtin.include_tasks:
+    file: libvirt.yml
+
+- name: Include vm setup
+  loop: "{{ libvirt_kvm_machines }}"
+  loop_control:
+    loop_var: vm
+    label: "{{ vm.name }}"
+  ansible.builtin.include_tasks:
+    file: vm_setup.yml
 
 ...

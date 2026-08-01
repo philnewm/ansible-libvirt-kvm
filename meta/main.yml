@@ -1,11 +1,11 @@
 ---
 
 galaxy_info:
-  role_name: libvirt-kvm
+  role_name: libvirt_kvm
   namespace: philnewm
-  author: author_name
-  description: ansible-role-template description
-  license: some_license
+  author: philnewm
+  description: configure libvirt kvm instances
+  license: MIT
   min_ansible_version: "2.1"
   platforms:
     - name: EL
@@ -13,9 +13,8 @@ galaxy_info:
         - "9"
     - name: Debian
       versions:
-        - "bookworm"
-    - name: "Ubuntu"
-      versions:
-        - "jammy"
-  galaxy_tags: []
+        - "trixie"
+  galaxy_tags:
+    - kvm
+    - libvirt
 dependencies: []

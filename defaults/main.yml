@@ -2,4 +2,55 @@
 
 state: present
 
+libvirt_kvm_networks:
+  - name: default
+    state: present
+    autostart: true
+    xml: |
+      <network>
+      <name>default</name>
+
+      <forward mode="nat"/>
+
+      <bridge name="virbr0" stp="on" delay="0"/>
+
+      <ip address="192.168.122.1" netmask="255.255.255.0">
+        <dhcp>
+          <range start="192.168.122.2" end="192.168.122.254"/>
+        </dhcp>
+      </ip>
+      </network>
+
+libvirt_kvm_machines:
+  - name: "Test01"
+    autostart: true
+    memory: 2048
+    vcpus: 2
+    machine: q35
+    osinfo:
+      name: almalinux9
+    disks:
+      - pool: default
+        size: 2
+        format: qcow2
+        bus: virtio
+    # networks:
+    #   - bridge: br0
+    #     mac:
+    #       address: "52:54:00:00:10:01"
+    #     model:
+    #       type: virtio
+    pxe: false
+    boot: "hd"
+    boot_opts:
+      uefi: true
+      firmware.feature0.name: secure-boot
+      firmware.feature0.enabled: false
+    graphics:
+      type: vnc
+      listen: 127.0.0.1
+    video:
+      model: vga
+    state: "running"
+
 ...
