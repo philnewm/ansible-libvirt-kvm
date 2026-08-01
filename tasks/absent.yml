@@ -1,8 +1,25 @@
 ---
 
-- name: Remove unused dependencies
+- name: Destroy vms
   become: true
-  ansible.builtin.package:
-    autoremove: true
+  loop: "{{ libvirt_kvm_machines }}"
+  loop_control:
+    loop_var: vm
+    label: "{{ vm.name }}"
+  community.libvirt.virt:
+    name: "{{ vm.name }}"
+    state: destroyed
+
+
+- name: Undefine VMs
+  become: true
+  loop: "{{ libvirt_kvm_machines }}"
+  loop_control:
+    loop_var: vm
+    label: "{{ vm.name }}"
+  community.libvirt.virt:
+    command: undefine
+    name: "{{ vm.name }}"
+    force: true   # remove NVRAM/metadata if present
 
 ...
