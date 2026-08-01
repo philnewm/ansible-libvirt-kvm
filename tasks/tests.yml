@@ -1,3 +1,40 @@
 ---
 
+- name: List all VMs
+  become: true
+  community.libvirt.virt:
+    command: list_vms
+  register: all_vms
+
+- name: Test existing vms
+  loop: "{{ libvirt_kvm_machines }}"
+  loop_control:
+    loop_var: vm
+    label: "{{ vm.name }}"
+  ansible.builtin.assert:
+    that:
+      - vm.name in all_vms.list_vms
+    quiet: true
+
+- name: Check running vms
+  when: libvirt_kvm_machines | selectattr('state', 'equalto', 'running') | list | length > 0
+  block:
+    - name: List only running VMs
+      become: true
+      community.libvirt.virt:
+        command: list_vms
+        state: running
+      register: running_vms
+
+    - name: Test running vms
+      loop: "{{ libvirt_kvm_machines }}"
+      loop_control:
+        loop_var: vm
+        label: "{{ vm.name }}"
+      when: vm.state == "running"
+      ansible.builtin.assert:
+        that:
+          - vm.name in running_vms.list_vms
+        quiet: true
+
 ...
