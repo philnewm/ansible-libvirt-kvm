@@ -48,4 +48,4 @@
   become: true
   community.libvirt.virt:
     name: "{{ vm.name }}"
-    state: "{{ vm.state | default(shutdown) }}"
+    state: "{{ vm.state | default('shutdown') }}"
