@@ -14,5 +14,6 @@ libvirt_kvm_required_packages:
     - libvirt-daemon-driver-storage-core
   debian:
     - *common
+    - libvirt-daemon-system
 
 ...
