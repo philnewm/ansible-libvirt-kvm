@@ -1,7 +1,7 @@
 ---
 
 - name: Define default storage pool
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   loop: "{{ vm.disks }}"
   loop_control:
     loop_var: vdisk
@@ -18,7 +18,7 @@
       </pool>
 
 - name: Ensure default storage pool is active
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   loop: "{{ vm.disks }}"
   loop_control:
     loop_var: vdisk
@@ -29,7 +29,7 @@
     autostart: true
 
 - name: Configure vm
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_install:
     name: "{{ vm.name }}"
     state: present
@@ -51,7 +51,7 @@
     extra_args: "{{ vm.extra_args | default(omit) }}"
 
 - name: Start vm
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt:
     name: "{{ vm.name }}"
     state: "{{ vm.state | default('shutdown') }}"

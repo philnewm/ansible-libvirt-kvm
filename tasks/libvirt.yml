@@ -17,13 +17,13 @@
     mode: "0755"
 
 - name: Get libvirt networks
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_net:
     command: list_nets
   register: libvirt_networks
 
 - name: Define default NAT network
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   loop: "{{ libvirt_kvm_networks }}"
   loop_control:
     loop_var: network
@@ -37,13 +37,13 @@
     xml: "{{ network.xml }}"
 
 - name: Start default network
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_net:
     command: start
     name: default
 
 - name: Enable network autostart
-  become: true
+  become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_net:
     command: start
     name: default

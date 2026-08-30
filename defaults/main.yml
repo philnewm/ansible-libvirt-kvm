@@ -2,6 +2,7 @@
 
 state: present
 libvirt_kvm_vars_file: ""
+libvirt_kvm_as_root: false
 libvirt_kvm_networks:
   - name: default
     state: present
