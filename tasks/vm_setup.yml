@@ -1,3 +1,5 @@
+---
+
 - name: Define default storage pool
   become: true
   loop: "{{ vm.disks }}"
@@ -37,15 +39,21 @@
     machine: "{{ vm.machine | default('q35') }}"
     osinfo: "{{ vm.osinfo }}"
     disks: "{{ vm.disks }}"
+    location: "{{ vm.location | default(omit) }}"
+    location_opts: "{{ vm.location_opts | default(omit) }}"
     networks: "{{ vm.networks | default(omit) }}"
     pxe: "{{ vm.pxe | default(omit) }}"
     boot: "{{ vm.boot | default(omit) }}"
     boot_opts: "{{ vm.boot_opts | default(omit) }}"
     graphics: "{{ vm.graphics | default(omit) }}"
     video: "{{ vm.video | default(omit) }}"
+    initrd_inject: "{{ vm.initrd_inject | default(omit) }}"
+    extra_args: "{{ vm.extra_args | default(omit) }}"
 
 - name: Start vm
   become: true
   community.libvirt.virt:
     name: "{{ vm.name }}"
     state: "{{ vm.state | default('shutdown') }}"
+
+...
