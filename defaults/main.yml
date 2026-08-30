@@ -24,6 +24,7 @@ libvirt_kvm_networks:
 
 libvirt_kvm_machines:
   - name: "Test01"
+    uri: "qemu:///session"
     autostart: true
     memory: 2048
     vcpus: 2

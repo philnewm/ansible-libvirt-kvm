@@ -32,6 +32,7 @@
   become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_install:
     name: "{{ vm.name }}"
+    uri: "{{ vm.uri }}"
     state: present
     autostart: "{{ vm.autostart | default(false) }}"
     memory: "{{ vm.memory | default(2048) }}"
@@ -54,6 +55,7 @@
   become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt:
     name: "{{ vm.name }}"
+    uri: "{{ vm.uri }}"
     state: "{{ vm.state | default('shutdown') }}"
 
 ...
