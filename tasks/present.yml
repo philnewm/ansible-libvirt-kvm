@@ -7,6 +7,11 @@
     state: present
     update_cache: true
 
+- name: Include vars file if provided
+  when: libvirt_kvm_vars_file | length > 0
+  ansible.builtin.include_vars:
+    file: "{{ libvirt_kvm_vars_file }}"
+
 - name: Include libvirt setup
   ansible.builtin.include_tasks:
     file: libvirt.yml

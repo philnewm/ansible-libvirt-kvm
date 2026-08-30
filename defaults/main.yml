@@ -1,7 +1,7 @@
 ---
 
 state: present
-
+libvirt_kvm_vars_file: ""
 libvirt_kvm_networks:
   - name: default
     state: present
