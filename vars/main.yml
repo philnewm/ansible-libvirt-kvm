@@ -3,7 +3,6 @@
 libvirt_kvm_required_packages:
   common: &common
     - qemu-kvm
-    - qemu-system-x86
     - python3-libvirt
     - python3-lxml
     - virt-install
@@ -15,6 +14,7 @@ libvirt_kvm_required_packages:
     - libvirt-daemon-driver-storage-core
   debian:
     - *common
+    - qemu-system-x86
     - libvirt-daemon-system
     - libvirt-clients
 
