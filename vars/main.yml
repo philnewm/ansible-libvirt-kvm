@@ -6,6 +6,7 @@ libvirt_kvm_required_packages:
     - python3-libvirt
     - python3-lxml
     - virt-install
+    - virt-manager
   redhat:
     - *common
     - libvirt-daemon
