@@ -7,6 +7,13 @@
     state: started
     enabled: true
 
+- name: "Add existing user to group sudo: {{ ansible_facts.user_id }}"
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_facts.user_id }}"
+    groups: libvirt
+    append: true
+
 - name: Create storage pool directory
   become: true
   ansible.builtin.file:
