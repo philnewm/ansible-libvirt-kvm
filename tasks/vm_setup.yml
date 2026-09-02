@@ -50,12 +50,14 @@
     video: "{{ vm.video | default(omit) }}"
     initrd_inject: "{{ vm.initrd_inject | default(omit) }}"
     extra_args: "{{ vm.extra_args | default(omit) }}"
+    # For unattended installs which reboot afterwards
+    wait_timeout: "{{ vm.wait_timeout | default(1800) }}"
 
 - name: Start vm
   become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt:
     name: "{{ vm.name }}"
     uri: "{{ vm.uri | default('qemu:///system') }}"
-    state: "{{ vm.state | default('shutdown') }}"
+    state: "{{ vm.state | default('running') }}"
 
 ...
