@@ -5,7 +5,7 @@ libvirt_kvm_required_packages:
     - qemu-kvm
     - python3-libvirt
     - python3-lxml
-    - virt-install
+    # - virt-install does not work for Ubuntu24.04
     - virt-manager
   redhat:
     - *common
@@ -13,10 +13,12 @@ libvirt_kvm_required_packages:
     - libvirt-daemon-driver-qemu
     - libvirt-daemon-driver-network
     - libvirt-daemon-driver-storage-core
+    - virt-install
   debian:
     - *common
     - qemu-system-x86
     - libvirt-daemon-system
     - libvirt-clients
+    - virtinst
 
 ...

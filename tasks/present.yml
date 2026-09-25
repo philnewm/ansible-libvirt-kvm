@@ -24,4 +24,28 @@
   ansible.builtin.include_tasks:
     file: vm_setup.yml
 
+- name: Wait for VM installations to finish
+  become: "{{ libvirt_kvm_as_root }}"
+  ansible.builtin.async_status:
+    jid: "{{ install_job.jid }}"
+  loop: "{{ libvirt_kvm_install_jobs }}"
+  loop_control:
+    loop_var: install_job
+    label: "{{ install_job.name }}"
+  register: libvirt_kvm_install_status
+  until: libvirt_kvm_install_status is finished
+  retries: 210
+  delay: 10
+
+- name: Start vm
+  become: "{{ libvirt_kvm_as_root }}"
+  loop: "{{ libvirt_kvm_machines }}"
+  loop_control:
+    loop_var: vm
+    label: "{{ vm.name }}"
+  community.libvirt.virt:
+    name: "{{ vm.name }}"
+    uri: "{{ vm.uri | default('qemu:///system') }}"
+    state: "{{ vm.state | default('running') }}"
+
 ...
