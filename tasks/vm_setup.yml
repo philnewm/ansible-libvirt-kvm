@@ -28,6 +28,25 @@
     state: active
     autostart: true
 
+# required as `cloud_init` expects content rather than a file path
+- name: Prepare cloud-init data
+  when: vm.cloud_init is defined
+  block:
+    - name: Read cloud-init user-data
+      when: vm.cloud_init is defined
+      ansible.builtin.slurp:
+        src: "{{ vm.cloud_init.user_data_file }}"
+      register: libvirt_kvm_cloud_init_user_data
+
+    - name: Build cloud-init configuration
+      when: vm.cloud_init is defined
+      ansible.builtin.set_fact:
+        libvirt_kvm_cloud_init:
+          user_data: "{{ libvirt_kvm_cloud_init_user_data.content | b64decode }}"
+          meta_data: |
+            instance-id: {{ vm.name | lower }}
+            local-hostname: {{ vm.provisioning.hostname }}
+
 - name: Configure vm
   become: "{{ libvirt_kvm_as_root }}"
   community.libvirt.virt_install:
@@ -49,15 +68,20 @@
     graphics: "{{ vm.graphics | default(omit) }}"
     video: "{{ vm.video | default(omit) }}"
     initrd_inject: "{{ vm.initrd_inject | default(omit) }}"
+    cloud_init: "{{ libvirt_kvm_cloud_init | default(omit) }}"
     extra_args: "{{ vm.extra_args | default(omit) }}"
     # For unattended installs which reboot afterwards
     wait_timeout: "{{ vm.wait_timeout | default(1800) }}"
 
-- name: Start vm
-  become: "{{ libvirt_kvm_as_root }}"
-  community.libvirt.virt:
-    name: "{{ vm.name }}"
-    uri: "{{ vm.uri | default('qemu:///system') }}"
-    state: "{{ vm.state | default('running') }}"
+- name: Remember VM installation job
+  ansible.builtin.set_fact:
+    libvirt_kvm_install_jobs: >-
+      {{
+        libvirt_kvm_install_jobs | default([])
+        + [{
+            'name': vm.name,
+            'jid': libvirt_kvm_install_job.ansible_job_id
+          }]
+      }}
 
 ...
