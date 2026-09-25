@@ -72,6 +72,9 @@
     extra_args: "{{ vm.extra_args | default(omit) }}"
     # For unattended installs which reboot afterwards
     wait_timeout: "{{ vm.wait_timeout | default(1800) }}"
+  async: 2100
+  poll: 0
+  register: libvirt_kvm_install_job
 
 - name: Remember VM installation job
   ansible.builtin.set_fact:
